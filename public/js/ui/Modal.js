@@ -12,7 +12,14 @@ class Modal {
    * Если переданный элемент не существует,
    * необходимо выкинуть ошибку.
    * */
-  constructor( element ) {
+  constructor( element ) { 
+    if(element) {
+      this.element = element
+    } else {
+      throw('ошибка')
+    }
+
+    this.registerEvents()
 
   }
 
@@ -22,7 +29,9 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-
+    Array.from(this.element.querySelectorAll('[data-dismiss="modal"]')).forEach((modal)=> {
+      modal.addEventListener('click',  this.onClose.bind(this))
+    })
   }
 
   /**
@@ -30,25 +39,26 @@ class Modal {
    * Закрывает текущее окно (Modal.close())
    * */
   onClose( e ) {
-
+    e.preventDefault()
+    this.close()
   }
   /**
    * Удаляет обработчики событий
    * */
   unregisterEvents() {
-
+    modal.removeEventLisnter('click',  this.onClose.bind(this))
   }
   /**
    * Открывает окно: устанавливает CSS-свойство display
    * со значением «block»
    * */
   open() {
-
+    this.element.style.display = 'block'
   }
   /**
    * Закрывает окно: удаляет CSS-свойство display
    * */
   close(){
-
+    this.element.style.display = 'none'
   }
 }
