@@ -13,9 +13,8 @@ class AsyncForm {
    * через registerEvents()
    * */
   constructor( element ) {
-    if(!element) {
-      throw ('error')
-    }
+    console.log(element)
+    
     this.element = element
 
     this.registerEvents()
@@ -27,8 +26,8 @@ class AsyncForm {
    * */
   registerEvents() {
     this.element.addEventListener('submit', (e)=> {
-      e.preventDefault()
       this.submit()
+      e.preventDefault()
     })
   }
 
@@ -57,7 +56,6 @@ class AsyncForm {
    * данные, полученные из метода getData()
    * */
   submit() {
-    let options = this.getData()
-    onSubmit({options})
+    this.onSubmit( this.getData() )
   }
 }

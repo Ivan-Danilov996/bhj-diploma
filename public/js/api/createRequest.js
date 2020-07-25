@@ -3,39 +3,46 @@
  * на сервер.
  * */
 
-const createRequest = (options) => {
-    const xhr = new XMLHttpRequest
-    if(options.method === 'GET') {
-        let url = `${options.url}?`;
-        for (const [key, value] of Object.entries(options.data)) {
-            url += `${key}=${value}&`
-        }
-        let array = url.split('')
-        array.pop()
-        url = array.join('')
-        xhr.open(options.method, url)
+const createRequest = (options, callback) => {
+  const xhr = new XMLHttpRequest();
+  const formData = new FormData();
 
-        try {
-            xhr.send();
-            xhr.onreadystatechange = function () {
-                if(xhr.readyState == xhr.DONE && xhr.status == 200) {
-                    options.callback( err = null, xhr.response );
-                } 
-            };
-        }
-        catch ( err ) {
-            options.callback( err );
-        }
-    } else {
-        const formData = new FormData;
+  xhr.responseType = "json";
+  xhr.withCredentials = true;
 
-        for (const [key, value] of Object.entries(options.data)) {
-            formData.append( key, value );
+  let url = `${options.url}?`;
+
+  for (const [key, value] of Object.entries(options.data)) {
+    formData.append(key, value);
+    url += `${key}=${value}&`;
+  }
+
+  if (options.method === "GET") {
+    xhr.open(options.method, url.slice(0, -1));
+
+    try {
+      xhr.send();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == xhr.DONE && xhr.status == 200) {
+          callback((err = null), xhr.response);
         }
-        xhr.open( options.method , options.url );
-        xhr.send( formData );
+      };
+    } catch (err) {
+      callback(err);
     }
-    return xhr.response
+  } else {
+    xhr.open(options.method, options.url);
+    try {
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == xhr.DONE && xhr.status == 200) {
+              callback((err = null), xhr.response);
+            }
+          };
+    } catch (err) {
+        callback(err);
+    }
+  }
+  return xhr
 };
-
 
