@@ -15,10 +15,10 @@ class Modal {
   constructor(element) {
     if (element) {
       this.element = element;
-      console.log(this.element)
     } else {
       throw "ошибка";
     }
+    this.registerEvents()
   }
 
   /**
@@ -27,7 +27,6 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-    console.log(this.element)
     Array.from(this.element.querySelectorAll('[data-dismiss="modal"]')).forEach(
       (modal) => {
         modal.addEventListener("click", this.onClose.bind(this));
@@ -39,7 +38,7 @@ class Modal {
    * Срабатывает после нажатия на элементы, закрывающие окно.
    * Закрывает текущее окно (Modal.close())
    * */
-  onClose(e) {        
+  onClose(e) {      
     e.preventDefault();
     this.close();
   }
@@ -47,14 +46,17 @@ class Modal {
    * Удаляет обработчики событий
    * */
   unregisterEvents() {
-    this.element.removeEventLisnter("click", this.onClose.bind(this));
+    Array.from(this.element.querySelectorAll('[data-dismiss="modal"]')).forEach(
+      (modal) => {
+        modal.removeEventListener("click", this.onClose.bind(this));
+      }
+    );
   }
   /**
    * Открывает окно: устанавливает CSS-свойство display
    * со значением «block»
    * */
   open() {
-    this.registerEvents();
     this.element.style.display = "block";
   }
   /**
@@ -62,5 +64,6 @@ class Modal {
    * */
   close() {
     this.element.style.display = "none";
+    this.unregisterEvents()
   }
 }

@@ -18,11 +18,17 @@ class Sidebar {
    * при нажатии на кнопку .sidebar-toggle
    * */
   static initToggleButton() {
-    document.querySelector('.sidebar-toggle').addEventListener('click', (event)=> {
-      event.preventDefault()
-      document.querySelector('.sidebar-mini').classList.toggle('sidebar-collapse')
-      document.querySelector('.sidebar-mini').classList.toggle('sidebar-open')
-    })
+    document
+      .querySelector(".sidebar-toggle")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        document
+          .querySelector(".sidebar-mini")
+          .classList.toggle("sidebar-collapse");
+        document
+          .querySelector(".sidebar-mini")
+          .classList.toggle("sidebar-open");
+      });
   }
 
   /**
@@ -33,18 +39,16 @@ class Sidebar {
    * выходу устанавливает App.setState( 'init' )
    * */
   static initAuthLinks() {
-    // Array.from(document.querySelectorAll('.menu-item')).forEach((item)=> {
-    //   item.addEventListener('click', (e)=> {
-    //     e.preventDefault()
-    //     App.getModal(Array.from(item.classList).pop().split('_').pop()).open()
-    //   })
-    // })
-
-    const registerLink = document.querySelector( '.menu-item_register' );
-    const loginLink = document.querySelector( '.menu-item_login' );
-    const logoutLink = document.querySelector( '.menu-item_logout' );
-    registerLink.addEventListener( 'click', () => App.getModal( 'register' ).open() );
-    loginLink.addEventListener( 'click', () => App.getModal( 'login' ).open() );
-    logoutLink.addEventListener( 'click', () => User.logout() );
+    Array.from(document.querySelectorAll('.menu-item')).forEach((item)=> {
+      item.addEventListener('click', (e)=> {
+        e.preventDefault()
+        if (Array.from(item.classList).pop().split('_').pop() === 'logout') {
+            User.logout()
+            App.setState( 'init' )
+        } else {
+          App.getModal(Array.from(item.classList).pop().split('_').pop()).open()
+        }
+      })
+    })
   }
 }

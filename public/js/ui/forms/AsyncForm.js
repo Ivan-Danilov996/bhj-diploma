@@ -5,7 +5,8 @@
  * с таких форм собираются и передаются в метод onSubmit
  * для последующей обработки
  * */
-class AsyncForm {
+class AsyncForm  {
+  
   /**
    * Если переданный элемент не существует,
    * необходимо выкинуть ошибку.
@@ -13,7 +14,9 @@ class AsyncForm {
    * через registerEvents()
    * */
   constructor( element ) {
-    console.log(element)
+    if(!element) {
+      throw new Error('error');
+    }
     
     this.element = element
 
@@ -26,8 +29,8 @@ class AsyncForm {
    * */
   registerEvents() {
     this.element.addEventListener('submit', (e)=> {
-      this.submit()
       e.preventDefault()
+      this.submit()
     })
   }
 

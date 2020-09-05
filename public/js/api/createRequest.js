@@ -3,46 +3,40 @@
  * на сервер.
  * */
 
-const createRequest = (options, callback) => {
+const createRequest = (options) => {
   const xhr = new XMLHttpRequest();
-  const formData = new FormData();
+  let formData = new FormData();
 
   xhr.responseType = "json";
   xhr.withCredentials = true;
 
-  let url = `${options.url}?`;
-
-  for (const [key, value] of Object.entries(options.data)) {
-    formData.append(key, value);
-    url += `${key}=${value}&`;
-  }
-
   if (options.method === "GET") {
-    xhr.open(options.method, url.slice(0, -1));
-
-    try {
-      xhr.send();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == xhr.DONE && xhr.status == 200) {
-          callback((err = null), xhr.response);
-        }
-      };
-    } catch (err) {
-      callback(err);
+    options.url = `${options.url}?`;
+    for (let key in options.data) {
+      options.url += `${key}=${options.data[key]}&`;
     }
+    options.url = options.url.slice(0, -1);
   } else {
-    xhr.open(options.method, options.url);
-    try {
-        xhr.send(formData);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == xhr.DONE && xhr.status == 200) {
-              callback((err = null), xhr.response);
-            }
-          };
-    } catch (err) {
-        callback(err);
+    for (let key in options.data) {
+      formData.append(key, options.data[key]);
     }
   }
-  return xhr
+
+  xhr.addEventListener("readystatechange", () => {
+    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+      options.callback(null, xhr.response);
+    } else if (xhr.readyState === xhr.DONE && xhr.status !== 200) {
+      const err = new Error("Request Error");
+      options.callback(err, null);
+    }
+  });
+
+  try {
+    xhr.open(options.method, options.url);
+    xhr.send(formData);
+  } catch (err) {
+    options.callback(err);
+  }
+  return xhr;
 };
 
